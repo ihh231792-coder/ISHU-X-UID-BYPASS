@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ISHU OXC - UID BYPASS</title>
+<title>ISHU X UID BYPASS</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -404,10 +404,10 @@ animation:sigilFloat linear infinite;
 <div class="iris">
 <div class="pupil"></div>
 </div>
-<div class="six-eyes-mark">å…­çœ¼</div>
+<div class="six-eyes-mark">六眼</div>
 </div>
 
-<div class="login-title">ISHU OXC</div>
+<div class="login-title">ISHU X UID BYPASS</div>
 <div class="login-subtitle">ISHU Security System</div>
 
 <div class="form-group">
@@ -435,7 +435,7 @@ animation:sigilFloat linear infinite;
 <div id="dashPage">
 <div class="dash-box">
 <div class="dash-header">
-<h2>ISHU OXC - UID BYPASS</h2>
+<h2>ISHU X UID BYPASS</h2>
 <button class="logout-btn" onclick="doLogout()">LOGOUT</button>
 </div>
 
@@ -464,12 +464,13 @@ import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-ap
 import{getDatabase,ref,get,set,push,remove,onValue}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig={
-apiKey:"AIzaSyDummyKeyForPublic",
-databaseURL:"https://uidbypassaxcaman-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"uidbypassaxcaman",
-storageBucket:"uidbypassaxcaman.appspot.com",
-messagingSenderId:"000000000000",
-appId:"1:000000000000:web:000000000000000000"
+apiKey:"AIzaSyC5idUrdGsoHldNJS1Pt5AGVmMglMXOlzA",
+authDomain:"ishu-uid.firebaseapp.com",
+databaseURL:"https://ishu-uid-default-rtdb.firebaseio.com",
+projectId:"ishu-uid",
+storageBucket:"ishu-uid.firebasestorage.app",
+messagingSenderId:"724245089190",
+appId:"1:724245089190:web:4bd8b21c5de22965eadd67"
 };
 
 const app=initializeApp(firebaseConfig);
@@ -504,7 +505,7 @@ loadUIDList();
 },400);
 },300);
 }else{
-errDiv.textContent='Wrong credentials â€” Infinity rejected you';
+errDiv.textContent='Wrong credentials — Infinity rejected you';
 errDiv.style.display='block';
 errDiv.style.animation='none';errDiv.offsetHeight;errDiv.style.animation='shake 0.5s';
 }
@@ -730,7 +731,7 @@ requestAnimationFrame(drawGojo);
 drawGojo();
 
 // Floating cursed sigils
-const sigils=['å‘ª','è¡“','å»»','æˆ¦','é ˜','åŸŸ','å±•','é–‹','ç„¡','ä¸‹','é™','å…­','çœ¼'];
+const sigils=['呪','術','廻','戦','領','域','展','開','無','下','限','六','眼'];
 function spawnSigil(){
 const el=document.createElement('div');
 el.className='curse-sigil';
