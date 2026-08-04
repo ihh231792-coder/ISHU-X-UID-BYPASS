@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — ISHU X UID BYPASS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="login-page">
+  <canvas id="void-canvas"></canvas>
+  <div class="bg-vignette"></div>
+
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round">
+            <path d="M6 6 L18 18 M18 6 L6 18" />
+          </svg>
+        </span>
+        <span class="logo-txt">
+          <span class="logo-name gradient-text">ISHU_OXE</span>
+          <span class="logo-sub">Premium Secure System</span>
+        </span>
+      </a>
+      <div class="nav-links"><a href="index.html" class="btn btn-ghost">← Home</a></div>
+    </div>
+  </nav>
+
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-hero">
+        <div class="auth-logo">
+          <span class="orbit-ring"></span>
+          <span class="orbit-ring r2"></span>
+          <span class="logo-badge aurora">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" style="width:42px;height:42px;filter:drop-shadow(0 0 9px rgba(255,255,255,.9))"><path d="M6 6 L18 18 M18 6 L6 18" /></svg>
+          </span>
+          <span class="halo"></span>
+        </div>
+        <h1 class="auth-title">ISHU <span class="gradient-text">X</span> UID</h1>
+        <div class="auth-subtitle gradient-text">BYPASS</div>
+        <p class="hint" id="gate-hint">Owner / Admin access — Infinite Void Authentication</p>
+      </div>
+
+      <div class="role-chip">
+        <span class="chip active" data-role="user">🟢 Member</span>
+        <span class="chip" data-role="admin">👑 Owner / Admin</span>
+      </div>
+
+      <form id="login-form" autocomplete="on">
+        <div class="field">
+          <label for="username">Username</label>
+          <div class="input-wrap">
+            <input id="username" type="text" placeholder="Enter username" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input id="password" type="password" placeholder="Enter password" required />
+            <button type="button" class="eye-btn" id="toggle-pass" aria-label="toggle password">
+              <svg id="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><path d="M3 3l18 18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="field hidden" id="passcode-field">
+          <label for="passcode">Security Passcode</label>
+          <div class="input-wrap">
+            <input id="passcode" type="password" inputmode="numeric" placeholder="Enter 6-digit passcode" />
+          </div>
+        </div>
+        <label class="remember-row">
+          <input type="checkbox" id="remember" checked />
+          <span>Remember me</span>
+        </label>
+        <button type="submit" class="btn btn-block">Unlock Access →</button>
+      </form>
+
+      <div class="toast-msg" id="login-msg"></div>
+      <div class="auth-foot">Copyright © 2026 <b>ISHU_OXE</b> · Premium Secure System</div>
+    </div>
+  </div>
+
+  <!-- domain expansion overlay (login success pe) -->
+  <div class="exp-overlay" id="exp-overlay">
+    <span class="df-text">DOMAIN EXPANSION<br />INFINITE VOID</span>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/void.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>
