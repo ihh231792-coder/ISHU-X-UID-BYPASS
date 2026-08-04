@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — ISHU X UID BYPASS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="dash-page">
+  <canvas id="void-canvas"></canvas>
+  <div class="bg-vignette"></div>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round">
+            <path d="M6 6 L18 18 M18 6 L6 18" />
+          </svg>
+        </span>
+        <span class="logo-txt">
+          <span class="logo-name gradient-text">ISHU_OXE</span>
+          <span class="logo-sub">Premium Secure System</span>
+        </span>
+      </a>
+      <div class="nav-links">
+        <button class="btn btn-ghost" id="logout-btn">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dash container">
+    <div class="welcome">
+      <h1><span class="gradient-text">WELCOME BACK, <span id="disp-name">USER</span></span></h1>
+      <p>Role: <span id="disp-role"></span></p>
+    </div>
+
+    <!-- role-based stats -->
+    <div class="stats" id="stats-admin">
+      <div class="stat"><div class="num" id="s-total">0</div><div class="lbl">Total UIDs</div></div>
+      <div class="stat"><div class="num" id="s-perm" style="color:var(--success)">0</div><div class="lbl">Permanent</div></div>
+      <div class="stat"><div class="num" id="s-exp" style="color:var(--gold)">0</div><div class="lbl">Expiry-Based</div></div>
+      <div class="stat"><div class="num" id="s-users" style="color:var(--purple)">0</div><div class="lbl">Users</div></div>
+    </div>
+
+    <div class="my-status card" id="my-status" style="margin:30px 0;padding:28px 30px;background:var(--glass);border:1px solid var(--glass-br);border-radius:20px;backdrop-filter:blur(14px)">
+      <h3 style="font-family:var(--font-title);letter-spacing:2px;margin-bottom:14px">📋 MY UID STATUS</h3>
+      <div class="status-box" id="status-box"></div>
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+
+    <!-- ============ ADD UID (admin/owner) ============ -->
+    <section class="panel" id="panel-add">
+      <div class="panel-card" id="admin-add-form">
+        <h3>➕ ADD UID</h3>
+        <div class="form-grid">
+          <div class="field"><label>Free Fire UID</label><input id="uid-input" type="text" inputmode="numeric" placeholder="e.g. 6427839551" /></div>
+        </div>
+        <div class="mode-toggle" style="margin-top:18px">
+          <div class="radio-card selected" data-mode="permanent">
+            <span class="m-ico">∞</span><span class="m-txt">Permanent</span>
+            <div class="m-sub">Kabhi expire nahi hoga</div>
+          </div>
+          <div class="radio-card" data-mode="expiry">
+            <span class="m-ico">⏱️</span><span class="m-txt">Expiry Date</span>
+            <div class="m-sub">Date &amp; Time ke hisaab se</div>
+          </div>
+        </div>
+        <div class="form-grid hidden" id="expiry-fields" style="margin-top:16px">
+          <div class="field"><label>Expiry Date</label><input id="exp-date" type="date" /></div>
+          <div class="field"><label>Expiry Time</label><input id="exp-time" type="time" /></div>
+          <div class="field"><label>Year</label><input id="exp-year" type="number" placeholder="e.g. 2026" min="2020" max="2099" /></div>
+        </div>
+        <button class="btn" id="add-uid-btn" style="margin-top:22px">✦ Add UID</button>
+      </div>
+      <div class="panel-card hidden" id="user-add-form">
+        <h3>➕ ADD MY UID <span class="pill expiry" style="margin-left:8px">⏱ 24 HOUR</span></h3>
+        <p style="color:var(--muted);margin-bottom:16px">Member ke liye sirf <b>EK UID</b>, <b>24 hour</b> valid. Remove nahi kar sakte.</p>
+        <div class="form-grid">
+          <div class="field"><label>Free Fire UID</label><input id="uid-input-user" type="text" inputmode="numeric" placeholder="e.g. 6427839551" /></div>
+        </div>
+        <button class="btn" id="add-uid-user-btn" style="margin-top:18px">✦ Add My UID (24h)</button>
+      </div>
+    </section>
+
+    <!-- ============ MANAGE UIDS (admin/owner + user view) ============ -->
+    <section class="panel" id="panel-manage">
+      <div class="panel-card">
+        <h3>🗂️ ALL UIDs</h3>
+        <input id="search-uids" type="text" placeholder="Search UID..." class="sbar" />
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>UID</th><th>Mode</th><th>Expires At</th><th>Added By</th><th class="mng-col">Action</th></tr></thead>
+            <tbody id="uid-body"></tbody>
+          </table>
+        </div>
+        <div class="empty hidden" id="uid-empty"><span class="big">🌀</span> Koi UID nahi.</div>
+      </div>
+    </section>
+
+    <!-- ============ USERS & ADMINS (owner only) ============ -->
+    <section class="panel" id="panel-users">
+      <div class="panel-card">
+        <h3>➕ CREATE ACCOUNT</h3>
+        <div class="form-grid">
+          <div class="field"><label>Username</label><input id="nu-user" type="text" placeholder="username" /></div>
+          <div class="field"><label>Password</label><input id="nu-pass" type="text" placeholder="password" /></div>
+        </div>
+        <div class="role-chip" style="margin:18px 0 0">
+          <span class="chip active" data-newrole="user">🟢 Member</span>
+          <span class="chip" data-newrole="admin">🛡️ Admin</span>
+        </div>
+        <button class="btn btn-pink" id="create-acc-btn" style="margin-top:20px">✦ Create Account</button>
+      </div>
+      <div class="panel-card">
+        <h3>🛡️ USERS &amp; ADMINS</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Username</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="user-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="foot-contact">Copyright © 2026 <b>ISHU_OXE</b> · Premium Secure System</footer>
+
+  <!-- confirm modal -->
+  <div class="modal-mask" id="modal">
+    <div class="modal">
+      <h3 class="gradient-text" id="modal-title">Confirm</h3>
+      <p id="modal-text">Are you sure?</p>
+      <div class="row">
+        <button class="btn btn-danger" id="modal-yes">Yes, Continue</button>
+        <button class="btn btn-ghost" id="modal-no">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- edit expiry modal -->
+  <div class="modal-mask" id="modal-edit">
+    <div class="modal">
+      <h3 class="gradient-text">⏱️ Fix Expiry</h3>
+      <p id="edit-uid-label" style="color:var(--cyan);font-weight:700;letter-spacing:1px"></p>
+      <div class="field"><label>Expiry Date</label><input id="edit-date" type="date" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(3,6,20,.6);color:#fff" /></div>
+      <div class="field"><label>Expiry Time</label><input id="edit-time" type="time" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(3,6,20,.6);color:#fff" /></div>
+      <div class="field"><label>Year</label><input id="edit-year" type="number" placeholder="2026" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(3,6,20,.6);color:#fff" /></div>
+      <div class="row" style="margin-top:8px;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-pink" id="edit-apply" style="flex:1;justify-content:center">Apply</button>
+        <button class="btn btn-ghost" id="edit-perm" style="flex:1;justify-content:center">Make Permanent</button>
+        <button class="btn btn-danger" id="edit-close" style="flex:1;justify-content:center">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- toast -->
+  <div class="notify" id="notify"></div>
+
+  <!-- short-link unlock gate (member ka next UID) -->
+  <div class="modal-mask" id="modal-gate">
+    <div class="modal">
+      <h3 class="gradient-text">🔓 UNLOCK NEXT UID</h3>
+      <p style="color:var(--muted)">Pehli UID ka 24h complete. Next UID ke liye short link poora karo. Isse owner ko income milti hai.</p>
+      <div id="gate-iframe-wrap" style="width:100%;height:170px;border-radius:12px;overflow:hidden;background:#02051a;border:1px solid var(--glass-br);margin:14px 0">
+        <iframe id="gate-iframe" style="width:100%;height:100%;border:0"></iframe>
+      </div>
+      <p id="gate-status" style="color:var(--cyan);font-weight:700;letter-spacing:1px;min-height:20px"></p>
+      <div class="row" style="gap:10px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn btn-pink" id="gate-open" style="flex:1;justify-content:center">🌐 Open Link</button>
+        <button class="btn" id="gate-done" style="flex:1;justify-content:center">✅ I Completed</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn btn-ghost" id="gate-cancel" style="flex:1;justify-content:center">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/shortener.js"></script>
+  <script src="js/screenlock.js"></script>
+  <script src="js/void.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
