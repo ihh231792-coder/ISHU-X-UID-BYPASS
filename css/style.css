@@ -778,3 +778,20 @@ tr:hover td { background: rgba(0,229,255,0.04); }
 #my-status h3 { font-family: var(--font-title); letter-spacing: 2px; margin-bottom: 12px; }
 .mini-btn + .mini-btn { margin-left: 6px; }
 .chip[data-newrole] { margin-top: 0; }
+
+/* ================= MOBILE PERFORMANCE ================= */
+/* Phone pe blur/glow animations GPU pe heavy hote hain — halka kar do */
+@media (max-width: 767px) {
+  .nav { backdrop-filter: blur(6px); }
+  .card, .glass-card { backdrop-filter: none; background: rgba(7, 11, 34, 0.9); }
+  .logo-mark { animation: none; filter: drop-shadow(0 0 10px rgba(0,229,255,0.5)); }
+  .logo-mark::after { animation-duration: 0s; }
+  .btn { box-shadow: none !important; }
+  .btn:hover { transform: none; filter: none; box-shadow: none; }
+  .stat-glow, .pulse-glow { animation: none !important; }
+  .auth-logo .logo-badge { animation: none; filter: drop-shadow(0 0 12px rgba(0,229,255,0.6)); }
+  .auth-logo .logo-badge.aurora::before { animation-duration: 0s; }
+  .auth-logo::after { animation: none; }
+  body { animation: none !important; }
+  #exp-overlay .df-text { letter-spacing: 8px; }
+}
