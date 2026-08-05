@@ -128,6 +128,16 @@ const DB = (function () {
     try { await fbDelete("/web/locks/" + deviceId); } catch (e) {}
   }
 
+  // ---------- single user (free-account 7-day expiry checks) ----------
+  async function getUser(user) {
+    if (!FB || !user) return null;
+    try { return (await fbGet("/web/users/" + encodeURIComponent(user))) || null; } catch (e) { return null; }
+  }
+  async function removeUser(user) {
+    if (!FB || !user) return;
+    try { await fbDelete("/web/users/" + encodeURIComponent(user)); } catch (e) {}
+  }
+
   // ---------- sequential counter (OXC1, OXC2, ...) ----------
   async function getCounter() {
     if (!FB) return 0;
@@ -179,6 +189,8 @@ const DB = (function () {
     getLock,
     setLock,
     clearLock,
+    getUser,
+    removeUser,
     getCounter,
     setCounter
   };
