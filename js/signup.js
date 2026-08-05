@@ -1,16 +1,16 @@
 // ============================================================
 // FREE ACCOUNT GATE  —  YouTube Subscribe + Discord Join
-//  1) YouTube: open karo + subscribe karo + wapas aao
-//  2) Discord: join karo + backend bot se username VERIFY (100% real)
-//  3) Tab hi Generate active -> short user/pass banta hai
+//  1) YouTube open karo + subscribe + bell + wapas aao
+//  2) Discord open karo + join + wapas aao
+//  3) Tab hi Generate active -> sequential user/pass (OXC1/1231...)
 //  4) Ek browser = ek account (web/locks/<deviceId>) — owner reset tak
+//  SWID: account pehle login ke device pe lock ho jata hai
 //  History: uid_mycreds localStorage me saved, wapas aake dekh sakte hain
 // ============================================================
 (function () {
   const $ = id => document.getElementById(id);
   const G = window.__CONFIG.taskGate || {};
   const YT = G.youtube || {}, DC = G.discord || {};
-  const BACKEND = (G.backendUrl || "").trim();
 
   function deviceId() {
     let d = localStorage.getItem("uid_device");
@@ -22,7 +22,6 @@
   const ytStatus = $("yt-status"), dcStatus = $("dc-status");
   const ytName = $("yt-name"), dcName = $("dc-name");
   const genBtn = $("generate-btn"), countEl = $("count-down");
-  const dcVerify = $("dc-verify"), dcTag = $("dc-tag"), dcMsg = $("dc-verify-msg"), dcVerifyBtn = $("dc-verify-btn");
 
   // icons/names
   if (YT.channelName) ytName.textContent = "@" + YT.channelName + " subscribe karo";
@@ -30,19 +29,19 @@
   if (YT.icon) $("yt-icon").src = YT.icon;
   if (DC.icon) $("dc-icon").src = DC.icon;
 
-  // local state
+  // local state (browser pe)
   const opened = { yt: localStorage.getItem("uid_yt_open") === "1", dc: localStorage.getItem("uid_dc_open") === "1" };
   const switched = { yt: localStorage.getItem("uid_yt_switch") === "1", dc: localStorage.getItem("uid_dc_switch") === "1" };
-  let dcVerified = localStorage.getItem("uid_dc_verified") === "1";
 
   function ytDone() { return opened.yt && switched.yt; }
-  function allDone() { return ytDone() && dcVerified; }
+  function dcDone() { return opened.dc && switched.dc; }
+  function allDone() { return ytDone() && dcDone(); }
 
   function refresh() {
     ytStatus.textContent = ytDone() ? "✓ Done" : "Pending";
     ytStatus.className = "task-status" + (ytDone() ? " done" : "");
-    dcStatus.textContent = dcVerified ? "✓ Verified" : "Pending";
-    dcStatus.className = "task-status" + (dcVerified ? " done" : "");
+    dcStatus.textContent = dcDone() ? "✓ Done" : "Pending";
+    dcStatus.className = "task-status" + (dcDone() ? " done" : "");
     genBtn.disabled = !allDone();
   }
 
@@ -61,7 +60,6 @@
   });
   $("open-dc").addEventListener("click", () => {
     opened.dc = true; localStorage.setItem("uid_dc_open", "1");
-    dcVerify.classList.remove("hidden");
     window.open(DC.url || "https://discord.gg/", "_blank");
     refresh();
   });
@@ -96,43 +94,6 @@
     n._t = setTimeout(() => { n.className = "notify"; }, 3400);
   }
 
-  // ---------- DISCORD REAL VERIFICATION ----------
-  dcVerifyBtn.addEventListener("click", async () => {
-    const tag = (dcTag.value || "").trim();
-    if (!tag) { dcMsg.textContent = "❌ Pehle apna Discord username daalo."; dcMsg.style.color = "var(--danger)"; return; }
-    if (!BACKEND || BACKEND.startsWith("https://YOUR-BACKEND-URL")) {
-      dcMsg.textContent = "⚠️ Verification service abhi configured nahi hai — owner se bolo backend start kare (backend/server.py).";
-      dcMsg.style.color = "var(--gold)";
-      return;
-    }
-    dcMsg.textContent = "⏳ Bot se check ho raha hai...";
-    dcMsg.style.color = "var(--cyan)";
-    dcVerifyBtn.disabled = true;
-    try {
-      const r = await fetch(BACKEND + "/api/verify_discord", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tag })
-      });
-      const j = await r.json();
-      if (j.joined) {
-        dcVerified = true;
-        localStorage.setItem("uid_dc_verified", "1");
-        dcMsg.innerHTML = "✅ Verified! Server member: <b>@" + j.member + "</b>";
-        dcMsg.style.color = "var(--success)";
-        toast("🔓 Discord verified!", "ok");
-      } else {
-        dcMsg.innerHTML = "❌ Tum abhi <b>Discord server me nahi ho</b>. Pehle join karo, phir wapas verify karo.";
-        dcMsg.style.color = "var(--danger)";
-      }
-    } catch (e) {
-      dcMsg.textContent = "⚠️ Verify error: " + (e.message || e) + " — backend on hai?";
-      dcMsg.style.color = "var(--danger)";
-    }
-    dcVerifyBtn.disabled = false;
-    refresh();
-  });
-
   // ---------- already used / saved history ----------
   function showSavedCreds() {
     try {
@@ -163,8 +124,8 @@
       toast("❌ You are NOT subscribed to our channel! YouTube pe subscribe karo.", "err");
       return;
     }
-    if (!dcVerified) {
-      toast("❌ You are NOT joined/verified in our Discord! Username verify karo.", "err");
+    if (!dcDone()) {
+      toast("❌ You are NOT joined our Discord! Discord join karo.", "err");
       return;
     }
     let n = 15;
@@ -209,7 +170,7 @@
       await DB.setLock(DID, user);
       await DB.setCounter(n);
 
-      // history — ye browser pe save (wapas aake dekh payenge)
+      // history — is browser pe save (wapas aake dekh payenge)
       try { localStorage.setItem("uid_mycreds", JSON.stringify({ user, pass, at: Date.now() })); } catch (e) {}
 
       $("gen-user").textContent = user;
