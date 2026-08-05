@@ -367,10 +367,18 @@
       const tr = document.createElement("tr");
       const st = rec.disabled ? '<span class="pill expired">⛔ BLOCKED</span>' : '<span class="pill permanent">✔ ACTIVE</span>';
       const sw = rec.swid ? rec.swid.slice(0, 18) + "…" : "—";
+      let exp = "∞";
+      if (rec.expiresAt) {
+        const left = rec.expiresAt - Date.now();
+        exp = left <= 0
+          ? '<span style="color:#ff5a5a">EXPIRED</span>'
+          : fmtDate(rec.expiresAt) + " <span style=\"color:var(--muted);font-size:11px\">(" + Math.ceil(left / 86400000) + "d)</span>";
+      }
       tr.innerHTML = `
         <td style="font-weight:700">${user}</td>
         <td><b style="color:var(--pink);letter-spacing:1px">${rec.pass}</b></td>
         <td>${fmtDate(rec.createdAt)}</td>
+        <td style="font-size:12px;color:var(--muted)">${exp}</td>
         <td style="font-size:12px;color:var(--muted)">${sw}</td>
         <td>${st}
           <button class="mini-btn reset-btn" data-user="${user}" title="Account is PC pe locked hai — isse reset karo to kisi aur PC pe use kar sakega">🔓 Reset SWID</button>
