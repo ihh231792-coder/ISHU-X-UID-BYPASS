@@ -18,6 +18,13 @@
   const hintEl = document.getElementById("gate-hint");
   const remember = document.getElementById("remember");
 
+  // ---------- SWID / device fingerprint (browser pe persistent) ----------
+  function deviceId() {
+    let d = localStorage.getItem("uid_device");
+    if (!d) { d = "dev_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); localStorage.setItem("uid_device", d); }
+    return d;
+  }
+
   // ---------- auto-login: session already hai to seedha dashboard ----------
   try {
     const s = JSON.parse(localStorage.getItem("uid_session") || "null");
@@ -110,6 +117,18 @@
       if (rec.disabled || rec.role === "owner") {
         setMsg("⛔ Access revoked. " + CFG.contactMessage, "err");
         return;
+      }
+      // SWID lock: generated FREE accounts sirf usi device pe chalenge
+      if (rec.generated) {
+        const swid = deviceId();
+        if (rec.swid && rec.swid !== swid) {
+          setMsg("❌ Ye account is PC/device pe locked hai. Kisi aur pe use nahi kar sakte — Owner se SWID Reset karao.", "err");
+          return;
+        }
+        if (!rec.swid) {
+          rec.swid = swid;
+          try { await DB.save(data); } catch (e) {}
+        }
       }
 
       return grant(rec.role === "admin" ? "admin" : "user", user);
