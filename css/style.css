@@ -160,6 +160,22 @@ body {
 }
 .btn-pink { background: linear-gradient(120deg, var(--pink), var(--violet)); box-shadow: 0 0 24px rgba(255,90,209,0.4); }
 .btn-danger { background: linear-gradient(120deg, #ff2d55, #b0264f); box-shadow: 0 0 20px rgba(255,59,107,0.4); }
+.btn-pass {
+  background: linear-gradient(120deg, var(--cyan), var(--blue) 40%, var(--purple));
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 0 26px rgba(0,229,255,0.45);
+}
+.btn-pass:hover { box-shadow: 0 0 44px rgba(0,229,255,0.7); }
+
+.hint-glow {
+  background: linear-gradient(100deg, var(--cyan), var(--purple), var(--pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  filter: drop-shadow(0 0 12px rgba(0,229,255,.55));
+}
 
 /* ---------------- NAVBAR ---------------- */
 .nav {
