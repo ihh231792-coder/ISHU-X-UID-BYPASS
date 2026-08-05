@@ -50,7 +50,7 @@
     passcode.value = "";
     if (hintEl) {
       hintEl.textContent = gate === "user"
-        ? "UID Whitelist Module — Issue Premium UID"
+        ? "UID Whitelist Module — ISHU Premium UID"
         : "Owner / Admin — Full UID Management";
     }
   }));
