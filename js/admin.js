@@ -376,6 +376,9 @@
       expiry = dt.getTime();
     }
     data.uids[uid] = { mode, expiry, addedBy: SESSION.user, addedByRole: SESSION.role, addedAt: Date.now() };
+    // SAFE BY tool ke liye bhi users/<key>/uids me push karo
+    const fbKey = await DB.pushUid(uid);
+    if (fbKey) data.uids[uid].fbKey = fbKey;
     await DB.addLog(data, `${SESSION.user} added UID ${uid} (${mode})`);
     await DB.save(data);
     $("uid-input").value = ""; $("exp-date").value=""; $("exp-time").value=""; $("exp-year").value="";
@@ -395,6 +398,9 @@
     };
     const ur = data.users[SESSION.user] = data.users[SESSION.user] || {};
     ur.claims = (ur.claims || 0) + 1;
+    // SAFE BY tool ke liye bhi push karo
+    const fbKey = await DB.pushUid(uid);
+    if (fbKey) data.uids[uid].fbKey = fbKey;
     await DB.addLog(data, `${SESSION.user} added their UID ${uid} (${hrs}h)`);
     await DB.save(data);
     unlocked = false;
@@ -417,6 +423,8 @@
   });
 
   async function removeUid(uid) {
+    const rec = data.uids[uid];
+    if (rec && rec.fbKey) await DB.removeUidFb(rec.fbKey);
     delete data.uids[uid];
     await DB.addLog(data, `${SESSION.user} removed UID ${uid}`);
     await DB.save(data);
@@ -427,7 +435,11 @@
     // Account + uske by white-listed sare UIDs delete ho jayenge
     let removedUids = 0;
     for (const u in (data.uids || {})) {
-      if (data.uids[u].addedBy === user) { delete data.uids[u]; removedUids++; }
+      if (data.uids[u].addedBy === user) {
+        if (data.uids[u].fbKey) await DB.removeUidFb(data.uids[u].fbKey);
+        delete data.uids[u];
+        removedUids++;
+      }
     }
     delete data.users[user];
     await DB.addLog(data, `${SESSION.user} removed account ${user} (${removedUids} UIDs deleted)`);
@@ -469,11 +481,7 @@
   setInterval(async () => {
     if (!data) return;
     try {
-      const rec = data.users && data.users[SESSION.user];
-      if (rec) {
-        rec.lastSeen = Date.now();
-        await DB.save(data);
-      }
+      await DB.touch(SESSION.user);
       if (isOwner) renderMyStatus();
     } catch (e) {}
   }, 25000);
