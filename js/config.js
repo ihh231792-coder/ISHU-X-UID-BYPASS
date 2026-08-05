@@ -33,16 +33,19 @@ const CONFIG = {
     format: "json"
   },
 
-  // ---- DATABASE ----
-  useFirebase: false,
+  // ---- DATABASE (FIREBASE REALTIME DB) ----
+  // Ye DB SAFE BY tool se bhi jude hai — UID add karne par wahi
+  // users/<key>/uids format me bhi likha jata hai, taaki tool usse authorize kare.
+  useFirebase: true,
   firebase: {
-    apiKey: "",
-    authDomain: "",
-    databaseURL: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyC5idUrdGsoHldNJS1Pt5AGVmMglMXOlzA",
+    authDomain: "ishu-uid.firebaseapp.com",
+    databaseURL: "https://ishu-uid-default-rtdb.firebaseio.com",
+    projectId: "ishu-uid",
+    storageBucket: "ishu-uid.firebasestorage.app",
+    messagingSenderId: "724245089190",
+    appId: "1:724245089190:web:4bd8b21c5de22965eadd67",
+    measurementId: "G-LY5WWRJ2WX"
   }
 };
 
