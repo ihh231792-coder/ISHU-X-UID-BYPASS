@@ -366,12 +366,15 @@
     gens.forEach(([user, rec]) => {
       const tr = document.createElement("tr");
       const st = rec.disabled ? '<span class="pill expired">⛔ BLOCKED</span>' : '<span class="pill permanent">✔ ACTIVE</span>';
+      const sw = rec.swid ? rec.swid.slice(0, 18) + "…" : "—";
       tr.innerHTML = `
         <td style="font-weight:700">${user}</td>
         <td><b style="color:var(--pink);letter-spacing:1px">${rec.pass}</b></td>
         <td>${fmtDate(rec.createdAt)}</td>
+        <td style="font-size:12px;color:var(--muted)">${sw}</td>
         <td>${st}
-          <button class="mini-btn edit-btn" data-user="${user}" title="Is browser se naya account ban sakta hai">↻ Reset</button>
+          <button class="mini-btn reset-btn" data-user="${user}" title="Account is PC pe locked hai — isse reset karo to kisi aur PC pe use kar sakega">🔓 Reset SWID</button>
+          <button class="mini-btn edit-btn" data-user="${user}" title="Is browser se naya account ban sakta hai">↻ New-Gen</button>
           <button class="mini-btn del-btn" data-user="${user}">Remove</button></td>`;
       body.appendChild(tr);
     });
@@ -379,10 +382,24 @@
       const user = b.dataset.user;
       confirmModal("Reset Access", `"${user}" ka browser lock reset karein? Iske baad us browser se naya FREE account ban sakta hai.`, () => resetGen(user));
     }));
+    body.querySelectorAll(".reset-btn").forEach(b => b.addEventListener("click", () => {
+      const user = b.dataset.user;
+      confirmModal("Reset SWID", `"${user}" ka device lock reset karein? Iske baad ye account kisi bhi PC/device pe login karke use kar sakega (pehla login naye device ko bind karega).`, () => resetSwid(user));
+    }));
     body.querySelectorAll(".del-btn").forEach(b => b.addEventListener("click", () => {
       const user = b.dataset.user;
       confirmModal("Remove Account", `"${user}" ko hatao? Account delete ho jayega. Browser lock REHTA hai — wahi browser dobara generate nahi kar payega.`, () => removeUser(user));
     }));
+  }
+
+  async function resetSwid(user) {
+    const rec = data.users && data.users[user];
+    if (!rec) return;
+    rec.swid = null;
+    await DB.addLog(data, `${SESSION.user} RESET SWID of ${user}`);
+    await DB.save(data);
+    toast(`🔓 ${user} ka SWID reset. Ab kisi bhi PC pe use kar sakta hai.`, "ok");
+    render();
   }
 
   async function resetGen(user) {
