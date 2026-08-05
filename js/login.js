@@ -132,11 +132,7 @@
     } catch (e) {}
     // online/lastSeen track karo
     try {
-      const d = await DB.get();
-      if (d.users && d.users[user]) {
-        d.users[user].lastSeen = Date.now();
-        await DB.save(d);
-      }
+      await DB.touch(user);
     } catch (e) {}
     // DOMAIN EXPANSION flash (har user ko login par)
     const ov = document.getElementById("exp-overlay");
