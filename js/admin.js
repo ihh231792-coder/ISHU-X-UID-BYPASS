@@ -124,7 +124,7 @@
       ? [["add","➕ Add My UID"], ["manage","📋 My UIDs"]]
       : isAdmin
         ? [["add","➕ Add UID"], ["manage","🗂️ Manage UIDs"]]
-        : [["add","➕ Add UID"], ["manage","🗂️ Manage UIDs"], ["users","🛡️ Users & Admins"]];
+        : [["add","➕ Add UID"], ["manage","🗂️ Manage UIDs"], ["users","🛡️ Users & Admins"], ["gen","🎁 Free Accounts"]];
     tabs.innerHTML = "";
     defs.forEach(([id,label], i) => {
       const b = document.createElement("button");
@@ -134,10 +134,11 @@
       tabs.appendChild(b);
     });
     // show correct panels / hide owner-only
-    const panels = ["add","manage","users"];
+    const panels = ["add","manage","users","gen"];
     panels.forEach(p => { const el = $("panel-"+p); if (el) el.classList.remove("active"); });
     $("panel-" + defs[0][0]).classList.add("active");
     $("panel-users").classList.toggle("hidden", !isOwner);
+    $("panel-gen").classList.toggle("hidden", !isOwner);
     // forms
     $("admin-add-form").classList.toggle("hidden", isUser);
     $("user-add-form").classList.toggle("hidden", !isUser);
@@ -352,12 +353,54 @@
     }));
   }
 
+  // ---------- generated free accounts (owner only) ----------
+  function renderGen() {
+    const body = $("gen-body");
+    if (!body) return;
+    body.innerHTML = "";
+    const gens = Object.entries(data.users || {})
+      .filter(([, r]) => r && r.generated)
+      .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+    if (gens.length === 0) { $("gen-empty").classList.remove("hidden"); return; }
+    $("gen-empty").classList.add("hidden");
+    gens.forEach(([user, rec]) => {
+      const tr = document.createElement("tr");
+      const st = rec.disabled ? '<span class="pill expired">⛔ BLOCKED</span>' : '<span class="pill permanent">✔ ACTIVE</span>';
+      tr.innerHTML = `
+        <td style="font-weight:700">${user}</td>
+        <td><b style="color:var(--pink);letter-spacing:1px">${rec.pass}</b></td>
+        <td>${fmtDate(rec.createdAt)}</td>
+        <td>${st}
+          <button class="mini-btn edit-btn" data-user="${user}" title="Is browser se naya account ban sakta hai">↻ Reset</button>
+          <button class="mini-btn del-btn" data-user="${user}">Remove</button></td>`;
+      body.appendChild(tr);
+    });
+    body.querySelectorAll(".edit-btn").forEach(b => b.addEventListener("click", () => {
+      const user = b.dataset.user;
+      confirmModal("Reset Access", `"${user}" ka browser lock reset karein? Iske baad us browser se naya FREE account ban sakta hai.`, () => resetGen(user));
+    }));
+    body.querySelectorAll(".del-btn").forEach(b => b.addEventListener("click", () => {
+      const user = b.dataset.user;
+      confirmModal("Remove Account", `"${user}" ko hatao? Account delete ho jayega. Browser lock REHTA hai — wahi browser dobara generate nahi kar payega.`, () => removeUser(user));
+    }));
+  }
+
+  async function resetGen(user) {
+    const rec = data.users && data.users[user];
+    if (!rec) return;
+    if (rec.deviceId) await DB.clearLock(rec.deviceId);
+    await DB.addLog(data, `${SESSION.user} RESET free-account lock of ${user}`);
+    await DB.save(data);
+    toast(`↻ ${user} ka lock reset. Us browser se naya account ban sakta hai.`, "ok");
+    render();
+  }
+
   function render() {
     if (!data) return;
     renderStats();
     renderMyStatus();
     renderUids();
-    if (isOwner) renderUsers();
+    if (isOwner) { renderUsers(); renderGen(); }
   }
 
   // ---------- add UID (admin/owner) ----------
