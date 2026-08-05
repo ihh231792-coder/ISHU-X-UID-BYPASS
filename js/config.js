@@ -23,6 +23,9 @@ const CONFIG = {
   // Tabhi auto user/pass generate hoga (ek browser = ek account, owner reset tak).
   taskGate: {
     enabled: true,
+    // Discord REAL verification ka backend (backend/server.py deploy karke)
+    // yahan apna public URL daalo. Placeholder rehne par verification on nahi hoga.
+    backendUrl: "https://YOUR-BACKEND-URL",
     youtube: {
       channelName: "Ishu_yt7",
       url: "https://www.youtube.com/@Ishu_yt7?sub_confirmation=1",
