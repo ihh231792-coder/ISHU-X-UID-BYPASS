@@ -128,6 +128,16 @@ const DB = (function () {
     try { await fbDelete("/web/locks/" + deviceId); } catch (e) {}
   }
 
+  // ---------- sequential counter (OXC1, OXC2, ...) ----------
+  async function getCounter() {
+    if (!FB) return 0;
+    try { return (await fbGet("/web/counter")) || 0; } catch (e) { return 0; }
+  }
+  async function setCounter(n) {
+    if (!FB) return;
+    try { await fbPatch("/web/counter", n); } catch (e) {}
+  }
+
   // ---------- helpers ----------
   function pruneExpired(uids) {
     const out = {};
@@ -168,6 +178,8 @@ const DB = (function () {
     removeUidFb,
     getLock,
     setLock,
-    clearLock
+    clearLock,
+    getCounter,
+    setCounter
   };
 })();
