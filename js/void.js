@@ -9,6 +9,9 @@
 (function () {
   const canvas = document.getElementById("void-canvas");
   if (!canvas) return;
+  // MOBILE: canvas animation band — CPU/GPU bacha kar site 100% smooth.
+  // Background ab static CSS gradient se aata hai (style.css me).
+  if (window.innerWidth < 768) { canvas.style.display = "none"; return; }
   const ctx = canvas.getContext("2d");
   let W, H, parts = [], streaks = [], rings = [], core = { x: 0, y: 0, r: 40 };
   let mouse = { x: -9999, y: -9999 };
