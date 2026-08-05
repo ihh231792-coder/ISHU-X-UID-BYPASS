@@ -24,5 +24,10 @@
 
   <script src="js/config.js"></script>
   <script src="js/void.js"></script>
+  <script>
+    // VP Link short link complete hone par member yahan redirect hota hai.
+    // Ye flag admin page ke verify() ko batata hai ki link poora ho chuka hai.
+    try { localStorage.setItem("vplink_done", "1"); } catch (e) {}
+  </script>
 </body>
 </html>
