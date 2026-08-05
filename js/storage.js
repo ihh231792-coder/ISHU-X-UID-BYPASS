@@ -113,6 +113,21 @@ const DB = (function () {
     try { await fbDelete("/users/" + fbKey); } catch (e) {}
   }
 
+  // ---------- device lock (free-account one-time gate) ----------
+  // har browser ka apna deviceId -> web/locks/<deviceId> = username
+  async function getLock(deviceId) {
+    if (!FB || !deviceId) return null;
+    try { return (await fbGet("/web/locks/" + deviceId)) || null; } catch (e) { return null; }
+  }
+  async function setLock(deviceId, username) {
+    if (!FB || !deviceId) return;
+    try { await fbPatch("/web/locks/" + deviceId, { user: username, at: Date.now() }); } catch (e) {}
+  }
+  async function clearLock(deviceId) {
+    if (!FB || !deviceId) return;
+    try { await fbDelete("/web/locks/" + deviceId); } catch (e) {}
+  }
+
   // ---------- helpers ----------
   function pruneExpired(uids) {
     const out = {};
@@ -150,6 +165,9 @@ const DB = (function () {
     },
     touch,
     pushUid,
-    removeUidFb
+    removeUidFb,
+    getLock,
+    setLock,
+    clearLock
   };
 })();
