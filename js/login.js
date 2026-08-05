@@ -50,8 +50,8 @@
     passcode.value = "";
     if (hintEl) {
       hintEl.textContent = gate === "user"
-        ? "Member access — ek UID add karo (24 hour valid)"
-        : "Owner / Admin access — Full UID management";
+        ? "UID Whitelist Module — Issue Premium UID"
+        : "Owner / Admin — Full UID Management";
     }
   }));
 
@@ -111,7 +111,7 @@
       // 2) Registered user (admin / member)
       const rec = users[user];
       if (!rec || rec.pass !== pw) {
-        setMsg("❌ Galat ya removed credentials. Access denied.", "err");
+        setMsg("❌ Galat or removed credentials. Access denied.", "err");
         return;
       }
       if (rec.disabled || rec.role === "owner") {
@@ -120,6 +120,14 @@
       }
       // SWID lock: generated FREE accounts sirf usi device pe chalenge
       if (rec.generated) {
+        // 7-day auto-expiry: account delete + browser lock clear -> naya ban sakta hai
+        if (rec.expiresAt && Date.now() > rec.expiresAt) {
+          try { await DB.removeUser(user); } catch (e) {}
+          try { await DB.clearLock(deviceId()); } catch (e) {}
+          try { localStorage.removeItem("uid_session"); localStorage.removeItem("uid_mycreds"); } catch (e) {}
+          setMsg("⏳ Account 7 din purana ho gaya — auto delete. Naya free account banao.", "err");
+          return;
+        }
         const swid = deviceId();
         if (rec.swid && rec.swid !== swid) {
           setMsg("❌ Ye account is PC/device pe locked hai. Kisi aur pe use nahi kar sakte — Owner se SWID Reset karao.", "err");
