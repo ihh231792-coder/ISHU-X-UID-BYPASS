@@ -41,13 +41,15 @@ const CONFIG = {
   // ---- VP LINK SHORTENER (income ke liye) ----
   // Member ka 1st UID FREE hota hai. Uske baad next UID add karne se pehle
   // ek short link complete karna padta hai (isase owner ko income milti hai).
-  // VP Link dashboard se API key nikal kar yahan daalo.
+  // VP Link API: https://vplink.in/api?api=TOKEN&url=LONG_URL&format=json
   shortener: {
     enabled: true,
     name: "VP Link",
     apiKey: "3d22217f8c1b0d9faf78c89bccb1b35dd9ad3064",
-    apiUrl: "https://YOUR-VPLINK-API/api",                 // <-- VP Link dashboard se API URL yahan daalo
-    targetUrl: "https://yourwebsite.github.io/unlock.html", // <-- deployed site ka unlock page
+    apiUrl: "https://vplink.in/api",
+    // Member short link complete karega to is page pe redirect hoga.
+    // Ye page localStorage me "vplink_done" flag set karta hai = verified.
+    targetUrl: "https://ihh231792-coder.github.io/ISHU-X-UID-BYPASS/unlock.html",
     format: "json"
   },
 
