@@ -1,18 +1,27 @@
 // ============================================================
 // VP LINK SHORTENER INTEGRATION (income / unlock gate)
 // ============================================================
-// Generic flow (common VP-Link / ODPVC style):
-//   1) build()  ->  POST include api -> { id, url(visitor link), secret_key }
-//   2) Member completes the visitor link (countdown/timer).
-//   3) verify() ->  call getUrl with secret_key -> { status: "success" }
-// Agar aapki VP Link ki fields alag hain to build()/verify() adjust karo
-// ya mujhe dashboard ka API URL/fields batao.
+// VP Link API (dashboard se):
+//   GET https://vplink.in/api?api=TOKEN&url=LONG_URL&alias=X&format=json
+//   success -> { "status":"success", "shortenedUrl":"..." }
+//   error   -> { "status":"error", "message":"..." }
+// Flow:
+//   1) build()  -> short link banata hai (shortenedUrl)
+//   2) Member short link kholta hai, countdown/ads complete karta hai
+//   3) VP Link member ko targetUrl (unlock.html) pe redirect karta hai
+//   4) unlock.html localStorage me "vplink_done" flag set karta hai
+//   5) verify() -> usi flag ko check karta hai => UNLOCK
 // ============================================================
 
 const Shortener = (function () {
   const CFG = window.__CONFIG;
+  const DONE_KEY = "vplink_done";
+
   function cfg() { return CFG.shortener || null; }
-  function isOn() { const s = cfg(); return !!(s && s.enabled); }
+  function isOn() {
+    const s = cfg();
+    return !!(s && s.enabled && s.apiKey && s.apiUrl && !/YOUR-VPLINK/i.test(s.apiUrl));
+  }
 
   // Step 1: short link banao
   async function build() {
@@ -21,31 +30,25 @@ const Shortener = (function () {
     const params = new URLSearchParams({
       api: s.apiKey,
       url: s.targetUrl,
-      format: s.format || "json"
+      format: "json"
     });
-    const data = await (await fetch(api + "?" + params.toString())).json();
-    return {
-      id: data.id,
-      secret: data.secret_key || data.secret || "",
-      visitor: data.url || (api + "?" + params.toString()),
-      raw: data
-    };
+    const url = api + "?" + params.toString();
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data && data.status === "error") {
+      throw new Error(data.message || "VP Link error");
+    }
+    const visitor = (data && data.shortenedUrl) || (data && data.url) || url;
+    // naya link -> pehle purana completion flag clear
+    try { localStorage.removeItem(DONE_KEY); } catch (e) {}
+    return { id: "", secret: "", visitor, raw: data };
   }
 
   // Step 2: complete hone par verify karo
-  async function verify(id, secret) {
-    const s = cfg();
-    const api = s.apiUrl.replace(/\/$/, "");
-    const params = new URLSearchParams({
-      api: s.apiKey,
-      url: s.targetUrl,
-      secret: secret || "",
-      action: "getUrl",
-      format: s.format || "json"
-    });
-    const data = await (await fetch(api + "?" + params.toString())).json();
-    const ok = /success|ok|done|finished|active/i.test(data.status || "");
-    return { ok, raw: data };
+  async function verify() {
+    let ok = false;
+    try { ok = localStorage.getItem(DONE_KEY) === "1"; } catch (e) {}
+    return { ok, raw: { source: "local" } };
   }
 
   return { isOn, build, verify };
