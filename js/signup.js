@@ -95,6 +95,22 @@
   }
 
   // ---------- already used / saved history ----------
+  const EXPIRES_MS = 7 * 24 * 60 * 60 * 1000; // free account = 7 din valid, phir auto-delete
+
+  // lock check + 7-day auto-expire: purana account khatam ho to naya ban sakta hai
+  async function getOrCleanLock() {
+    const lock = await DB.getLock(DID);
+    if (!lock || !lock.user) return null;
+    try {
+      const rec = await DB.getUser(lock.user);
+      if (rec && rec.generated && rec.expiresAt && Date.now() > rec.expiresAt) {
+        await DB.removeUser(lock.user);
+        await DB.clearLock(DID);
+        return null;
+      }
+    } catch (e) {}
+    return lock;
+  }
   function showSavedCreds() {
     try {
       const saved = JSON.parse(localStorage.getItem("uid_mycreds") || "null");
@@ -107,12 +123,12 @@
   }
   async function checkLock() {
     try {
-      const lock = await DB.getLock(DID);
+      const lock = await getOrCleanLock();
       if (lock && lock.user) {
         $("task-box").classList.add("hidden");
         $("already-box").classList.remove("hidden");
         $("already-text").innerHTML = "Is browser se account <b>" + lock.user + "</b> pehle hi generate ho chuka hai." +
-          "<br />Naya account tab tak nahi banega jab tak owner <b>Reset</b> na kare.";
+          "<br />Account <b>7 din</b> valid hai. Expire hone par auto-delete — naya ban sakta hai (ya owner <b>Reset</b> kare).";
         showSavedCreds();
       }
     } catch (e) {}
@@ -146,11 +162,11 @@
 
   async function doGenerate() {
     try {
-      const lock = await DB.getLock(DID);
+      const lock = await getOrCleanLock();
       if (lock && lock.user) {
         $("task-box").classList.add("hidden");
         $("already-box").classList.remove("hidden");
-        $("already-text").innerHTML = "Is browser se account <b>" + lock.user + "</b> pehle hi generate ho chuka hai.";
+        $("already-text").innerHTML = "Is browser se account <b>" + lock.user + "</b> pehli hi generate ho chuka hai.";
         showSavedCreds();
         return;
       }
@@ -163,7 +179,8 @@
       data.users[user] = {
         pass, role: "user", disabled: false,
         generated: true, deviceId: DID,
-        createdBy: "TASK_GATE", createdAt: Date.now()
+        createdBy: "TASK_GATE", createdAt: Date.now(),
+        expiresAt: Date.now() + EXPIRES_MS
       };
       await DB.addLog(data, "FREE ACCOUNT generated: " + user);
       await DB.save(data);
