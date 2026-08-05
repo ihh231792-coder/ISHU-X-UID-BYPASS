@@ -444,6 +444,9 @@ body {
 .remember-row input {
   width: 18px; height: 18px; accent-color: var(--cyan); cursor: pointer;
 }
+.divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 16px 0 4px; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--glass-br); }
+.divider span { letter-spacing: 2px; }
 .chip {
   padding: 7px 16px;
   border-radius: 30px;
@@ -793,5 +796,13 @@ tr:hover td { background: rgba(0,229,255,0.04); }
   .auth-logo .logo-badge.aurora::before { animation-duration: 0s; }
   .auth-logo::after { animation: none; }
   body { animation: none !important; }
+  body {
+    background:
+      radial-gradient(600px 420px at 50% -5%, rgba(60,80,255,0.35) 0%, transparent 60%),
+      radial-gradient(500px 380px at 90% 110%, rgba(178,38,255,0.28) 0%, transparent 60%),
+      linear-gradient(160deg, #0b1130 0%, #070b22 45%, #030614 100%);
+    background-attachment: fixed;
+  }
+  #void-canvas { display: none; }
   #exp-overlay .df-text { letter-spacing: 8px; }
 }
