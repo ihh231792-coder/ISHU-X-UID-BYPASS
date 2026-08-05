@@ -462,7 +462,7 @@ body {
 }
 .divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 16px 0 4px; }
 .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--glass-br); }
-.divider span { letter-spacing: 2px; }
+.divider span { letter-spacing: 4px; font-size: 17px; font-weight: 800; color: var(--cyan); text-transform: uppercase; text-shadow: 0 0 12px rgba(0,229,255,.55); }
 .chip {
   padding: 7px 16px;
   border-radius: 30px;
