@@ -193,9 +193,10 @@
         showSavedCreds();
         return;
       }
-      // SHORT user/pass — muthhi me aaye
-      const user = "OXE" + Math.floor(1000 + Math.random() * 9000);
-      const pass = Math.random().toString(36).slice(2, 5) + Math.floor(100 + Math.random() * 900);
+      // SEQUENTIAL user/pass: OXC1/1231, OXC2/1232, OXC3/1233 ...
+      const n = (await DB.getCounter()) + 1;
+      const user = "OXC" + n;
+      const pass = "123" + n;
       const data = await DB.init();
       if (data.users[user]) { toast("Retry — dobara dabao.", "err"); return; }
       data.users[user] = {
@@ -206,6 +207,7 @@
       await DB.addLog(data, "FREE ACCOUNT generated: " + user);
       await DB.save(data);
       await DB.setLock(DID, user);
+      await DB.setCounter(n);
 
       // history — ye browser pe save (wapas aake dekh payenge)
       try { localStorage.setItem("uid_mycreds", JSON.stringify({ user, pass, at: Date.now() })); } catch (e) {}
