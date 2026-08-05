@@ -17,6 +17,24 @@ const CONFIG = {
   // Normal user ko block hone par ye message dikhega
   contactMessage: "Contact to Owner: ISHU_OXE",
 
+  // ---- FREE ACCOUNT GATE (YouTube Subscribe + Discord Join) ----
+  // Normal user free account lene ke liye dono tasks poorne honge:
+  // 1) YouTube channel subscribe, 2) Discord server join.
+  // Tabhi auto user/pass generate hoga (ek browser = ek account, owner reset tak).
+  taskGate: {
+    enabled: true,
+    youtube: {
+      channelName: "Ishu_yt7",
+      url: "https://www.youtube.com/@Ishu_yt7?sub_confirmation=1",
+      icon: "https://static.vecteezy.com/system/resources/previews/065/386/840/non_2x/youtube-icon-logo-yt-app-editable-transparent-background-premium-social-media-design-for-digital-download-free-png.png"
+    },
+    discord: {
+      serverName: "ISHU X Discord",
+      url: "https://discord.gg/hkp7XAmerS",
+      icon: "https://freepnglogo.com/images/all_img/1708701266discord-logo-transparent.png"
+    }
+  },
+
   // Normal user ki UID sirf 24 hour ke liye valid hogi
   userUidDurationHours: 24,
 
